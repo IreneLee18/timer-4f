@@ -49,10 +49,10 @@ function App() {
       newCountryList.current = list;
     });
   };
-  getDate(countryDate);
   const timeId = useRef(null);
 
   useEffect(() => {
+    getDate(countryDate);
     timeId.current = setInterval(() => {
       setCountryDate(newCountryList.current);
     }, 1000);
@@ -60,22 +60,24 @@ function App() {
       clearInterval(timeId.current);
       timeId.current = null;
     };
-  }, []);
+  }, [countryDate]);
   return (
     <>
       <div className="container">
         <h1>WORLD CLOCK</h1>
-        <ul className="card">
-          {countryDate.map((item) => (
-            <li key={item.city}>
-              <div>
-                <h2>{item.city}</h2>
-                <p>{item.date}</p>
-              </div>
-              <div className="time">{item.time}</div>
-            </li>
-          ))}
-        </ul>
+        {Object.keys(countryDate[0]).includes('date') ? (
+          <ul className="card">
+            {countryDate.map((item) => (
+              <li key={item.city}>
+                <div>
+                  <h2>{item.city}</h2>
+                  <p>{item.date}</p>
+                </div>
+                <div className="time">{item.time}</div>
+              </li>
+            ))}
+          </ul>
+        ) : <h3>載入中...請稍等</h3>}
       </div>
     </>
   );

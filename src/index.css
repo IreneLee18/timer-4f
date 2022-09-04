@@ -67,3 +67,8 @@ p {
 .time {
   font-size: 72px;
 }
+h3{
+  font-size: 60px;
+  text-align: center;
+  font-style:italic;	
+}
