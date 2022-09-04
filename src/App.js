@@ -1,24 +1,83 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useState, useRef, useEffect } from "react";
 function App() {
+  const [countryDate, setCountryDate] = useState([
+    {
+      city: "NEW YORK",
+      timeZone: "America/New_York",
+    },
+    {
+      city: "LONDON",
+      timeZone: "Europe/London",
+    },
+    {
+      city: "BANGKOK",
+      timeZone: "Asia/Bangkok",
+    },
+    {
+      city: "TAIWAN",
+      timeZone: "Asia/Taipei",
+    },
+    {
+      city: "SYDNEY",
+      timeZone: "Australia/Sydney",
+    },
+  ]);
+  const newCountryList = useRef([]);
+  const getDate = (data) => {
+    const list = [];
+    // options: 設定時區參數的物件，要有 timeZone 這個參數，才能顯示其他國家的日期和時間!
+    Object.values(data).forEach((item) => {
+      const options = {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: item.timeZone,
+      };
+      let date = new Date().toLocaleString("en-us", options).split(", ");
+      const newCountryDate = {};
+      newCountryDate.city = item.city;
+      newCountryDate.timeZone = item.timeZone;
+      newCountryDate.date = `${date[0].substring(4, 6)} ${date[0].substring(
+        0,
+        3
+      )}. ${date[1].substring(0, 4)}`;
+      newCountryDate.time = date[2];
+      list.push(newCountryDate);
+      newCountryList.current = list;
+    });
+  };
+  getDate(countryDate);
+  const timeId = useRef(null);
+
+  useEffect(() => {
+    timeId.current = setInterval(() => {
+      setCountryDate(newCountryList.current);
+    }, 1000);
+    return () => {
+      clearInterval(timeId.current);
+      timeId.current = null;
+    };
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="container">
+        <h1>WORLD CLOCK</h1>
+        <ul className="card">
+          {countryDate.map((item) => (
+            <li key={item.city}>
+              <div>
+                <h2>{item.city}</h2>
+                <p>{item.date}</p>
+              </div>
+              <div className="time">{item.time}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
 
